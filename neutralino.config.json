@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/benjammin4dayz/neutralino-schema/refs/heads/main/dist/neutralino.config.schema.json",
+  "applicationId": "com.github.benjammin4dayz.hitmanlauncher",
+  "applicationName": "HITMAN Launcher",
+  "author": "benjammin4dayz",
+  "description": "Unofficial launcher for HITMAN: World of Assassination",
+  "version": "0.1.0",
+  "defaultMode": "window",
+  "documentRoot": "/react-src/dist/",
+  "url": "/",
+  "singlePageServe": false,
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "nativeAllowList": [
+    "app.*",
+    "os.*",
+    "storage.*",
+    "updater.*",
+    "filesystem.writeBinaryFile",
+    "window.setDraggableRegion",
+    "window.unsetDraggableRegion",
+    "window.move",
+    "window.minimize",
+    "window.create",
+    "window.center",
+    "window.getPosition"
+  ],
+  "modes": {
+    "window": {
+      "title": "HITMAN Launcher",
+      "width": 800,
+      "height": 500,
+      "minWidth": 400,
+      "minHeight": 200,
+      "fullScreen": false,
+      "icon": "/react-src/public/logo.png",
+      "alwaysOnTop": false,
+      "enableInspector": false,
+      "borderless": true,
+      "transparent": true,
+      "maximize": false,
+      "resizable": true,
+      "hidden": false,
+      "useSavedState": false,
+      "exitProcessOnClose": true
+    }
+  },
+  "cli": {
+    "binaryName": "HITMAN",
+    "resourcesPath": "/react-src/dist/",
+    "resourcesExclude": "",
+    "extensionsPath": "/extensions/",
+    "extensionsExclude": "",
+    "distributionPath": "/dist/",
+    "frontendLibrary": {
+      "patchFile": "/react-src/index.html",
+      "devUrl": "http://localhost:3000",
+      "projectPath": "/react-src/",
+      "initCommand": "cd .. && npm ci",
+      "devCommand": "npm run dev",
+      "waitTimeout": 20000,
+      "buildCommand": "npm run build"
+    },
+    "binaryVersion": "nightly"
+  }
+}

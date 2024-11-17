@@ -1,0 +1,22 @@
+{
+  "name": "hitman-launcher",
+  "version": "0.1.0",
+  "private": true,
+  "repository": "https://github.com/benjammin4dayz/hitman-launcher",
+  "type": "module",
+  "workspaces": [
+    "react-src"
+  ],
+  "scripts": {
+    "build": "neu build --clean",
+    "build:release": "neu build --clean --release",
+    "clean": "npm run clean --workspaces --if-present && rm -rf .tmp/ dist/ node_modules/ ",
+    "lint": "npm run lint --workspaces --if-present",
+    "setup": "npm ci && neu update",
+    "start": "neu run -- --window-enable-inspector",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@neutralinojs/neu": "^11.3.0"
+  }
+}
