@@ -15,13 +15,9 @@ export const Config = () => {
     savePeacockPath,
   } = useAppContext();
 
-  const handleCheckboxChange = e => {
-    const { value, checked } = e.target;
-
-    if (checked) {
-      setBackground(value);
-      NeuDB.setKey('background', value);
-    }
+  const handleSetBackground = e => {
+    setBackground(BACKGROUNDS[e.target.value]);
+    NeuDB.setKey('background', BACKGROUNDS[e.target.value]);
   };
 
   return (
@@ -80,19 +76,22 @@ export const Config = () => {
       </label>
       <label>
         Background
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '0.5rem' }}>
-          {BACKGROUNDS.map((bg, key) => (
-            <>
-              {key}
-              <input
-                type="radio"
-                name="background"
-                value={bg}
-                defaultChecked={background === bg}
-                onChange={handleCheckboxChange}
-              />
-            </>
-          ))}
+        <div>
+          <input
+            type="range"
+            min="0"
+            max={BACKGROUNDS.length - 1}
+            value={BACKGROUNDS.indexOf(background)}
+            onChange={handleSetBackground}
+            list="background-options"
+          />
+          <datalist id="background-options">
+            {BACKGROUNDS.map((bg, index) => (
+              <option key={`${index}-${bg}`} value={index}>
+                {bg}
+              </option>
+            ))}
+          </datalist>
         </div>
       </label>
     </fieldset>
