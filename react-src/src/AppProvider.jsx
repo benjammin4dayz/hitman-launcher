@@ -33,56 +33,21 @@ export const AppProvider = ({ children }) => {
   const { shutdown: _shutdown } = useNeutralinoContext();
 
   const [background, setBackground] = useState(BACKGROUNDS[0]);
-
   const [gamePath, setGamePath] = useState('');
-  const saveGamePath = () => NeuDB.setKey('gamePath', gamePath);
-
-  const [game, setGame] = useState(null);
-  const startGame = useCallback(() => {
-    if (gamePath.startsWith('steam')) {
-      return new Promise(resolve => {
-        const procWatcher = new ProcessWatcher(path.basename(GAME_EXECUTABLE), {
-          onProcStart: pid => {
-            setGame({
-              // When spawning a process through an intermediate, like Steam,
-              // we don't have a direct handle to the process. In order to
-              // preserve the ability to exit the process, we need to return a
-              // platform-specific command that kills a target PID
-              exit: () => {
-                return _spawn(`cmd /c taskkill /pid ${pid} /f /t`);
-              },
-            });
-            resolve();
-          },
-          onProcEnd: () => {
-            setGame(null);
-            procWatcher.stopWatcher();
-          },
-        });
-
-        procWatcher.startWatcher(3000);
-
-        _spawn(`cmd /c start ${gamePath.trim()}`);
-      });
-    }
-    return spawn(gamePath, GAME_EXECUTABLE, setGame);
-  }, [gamePath]);
-  const stopGame = useCallback(async () => {
-    if (game) {
-      await game.exit();
-      setGame(null);
-    }
-  }, [game]);
-
   const [peacockPath, setPeacockPath] = useState('');
+  const [game, setGame] = useState(null);
+  const [patcher, setPatcher] = useState(null);
+  const [server, setServer] = useState(null);
+
+  const saveGamePath = () => NeuDB.setKey('gamePath', gamePath);
   const savePeacockPath = () => NeuDB.setKey('peacockPath', peacockPath);
 
-  const [patcher, setPatcher] = useState(null);
-  const startPatcher = useCallback(() => {
-    return peacockPath
-      ? spawn(peacockPath, PATCHER_EXECUTABLE, setPatcher)
-      : null;
+  const startPatcher = useCallback(async () => {
+    if (peacockPath) {
+      await spawn(peacockPath, PATCHER_EXECUTABLE, setPatcher);
+    }
   }, [peacockPath, setPatcher]);
+
   const stopPatcher = useCallback(async () => {
     if (patcher) {
       await patcher.exit();
@@ -90,18 +55,61 @@ export const AppProvider = ({ children }) => {
     }
   }, [patcher]);
 
-  const [server, setServer] = useState(null);
-  const startServer = useCallback(() => {
-    return peacockPath
-      ? spawn(peacockPath, SERVER_EXECUTABLE, setServer)
-      : null;
+  const startServer = useCallback(async () => {
+    if (peacockPath) {
+      await spawn(peacockPath, SERVER_EXECUTABLE, setServer);
+    }
   }, [peacockPath, setServer]);
+
   const stopServer = useCallback(async () => {
     if (server) {
       await server.exit();
       setServer(null);
     }
   }, [server]);
+
+  const startGame = useCallback(async () => {
+    const useDirectLaunchStrategy = !['steam'].some(entry =>
+      gamePath.startsWith(entry)
+    );
+
+    if (useDirectLaunchStrategy) {
+      await spawn(gamePath, GAME_EXECUTABLE, setGame);
+      return;
+    }
+
+    // When spawning a process through an intermediate, like Steam,
+    // we don't have a direct handle to the process. In order to
+    // preserve the ability to exit the process, we need to return a
+    // platform-specific command that kills a target PID
+    await new Promise(resolve => {
+      const procWatcher = new ProcessWatcher(path.basename(GAME_EXECUTABLE), {
+        onProcStart: pid => {
+          setGame({
+            exit: () => {
+              return _spawn(`cmd /c taskkill /pid ${pid} /f /t`);
+            },
+          });
+          resolve();
+        },
+        onProcEnd: () => {
+          setGame(null);
+          procWatcher.stopWatcher();
+        },
+      });
+
+      procWatcher.startWatcher(3000);
+
+      _spawn(`cmd /c start ${gamePath.trim()}`);
+    });
+  }, [gamePath]);
+
+  const stopGame = useCallback(async () => {
+    if (game) {
+      await game.exit();
+      setGame(null);
+    }
+  }, [game]);
 
   const shutdown = useCallback(
     () =>

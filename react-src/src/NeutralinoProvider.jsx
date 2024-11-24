@@ -50,25 +50,9 @@ export const NeutralinoProvider = ({ children }) => {
     }
   }, [ready, dragHandle]);
 
-  const createWindowAtCursor = async (url, options) => {
-    const { x, y } = await Neutralino.window.getPosition();
-
-    return Neutralino.window.create(url, {
-      x,
-      y,
-      borderless: false,
-      enableInspector: import.meta.env.DEV ? true : false,
-      exitProcessOnClose: true,
-      resizable: true,
-      transparent: false,
-      ...options,
-    });
-  };
-
   return (
     <NeutralinoContext.Provider
       value={{
-        createWindowAtCursor,
         shutdown,
         minimize: Neutralino.window.minimize,
         ready,

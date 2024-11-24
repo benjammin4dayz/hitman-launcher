@@ -7,9 +7,9 @@
 </p>
 
 <p align="center">
-<a href="https://github.com/benjammin4dayz/hitman-launcher/blob/main/LICENSE.md" target="_blank"><img alt="📝 License: GPLv3" src="https://img.shields.io/badge/%F0%9F%93%9D_license-GPLv3-21bb42.svg" /></a>
-<a href="#"><img src="https://img.shields.io/github/package-json/dependency-version/benjammin4dayz/hitman-launcher/%40neutralinojs%2Flib?filename=react-src%2Fpackage.json&label=Neutralino" /></a>
-<a href="https://github.com/benjammin4dayz/hitman-launcher/releases/latest/download/HITMAN-release.zip"><img src="https://img.shields.io/github/downloads/benjammin4dayz/hitman-launcher/latest/HITMAN-release.zip" /></a>
+<a href="https://github.com/benjammin4dayz/hitman-launcher/blob/main/LICENSE" target="_blank"><img alt="📝 License: GPLv3" src="https://img.shields.io/badge/%F0%9F%93%9D_license-GPLv3-21bb42.svg" /></a>
+<a href="#"><img alt="💫 Neutralino" src="https://img.shields.io/github/package-json/dependency-version/benjammin4dayz/hitman-launcher/%40neutralinojs%2Flib?filename=react-src%2Fpackage.json&label=%F0%9F%92%AB%20Neutralino" /></a>
+<a href="https://github.com/benjammin4dayz/hitman-launcher/releases/latest/download/HITMAN-release.zip" target="_blank"><img src="https://img.shields.io/github/downloads/benjammin4dayz/hitman-launcher/latest/HITMAN-release.zip" /></a>
 </p>
 
 ### Features

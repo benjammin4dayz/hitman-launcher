@@ -1,10 +1,8 @@
 import hitmapsLogo from '../../assets/hitmaps-h.svg';
-import { useNeutralinoContext } from '../../NeutralinoProvider';
 import { AppBarButton } from '../atoms/AppBarButton';
+import { createWindowAtCursor } from '../../utils/neu';
 
 export const AppBarButtonGroup = () => {
-  const { createWindowAtCursor } = useNeutralinoContext();
-
   const buttonStyle = {
     display: 'flex',
     justifyContent: 'center',

@@ -48,3 +48,18 @@ export async function spawn(
     },
   };
 }
+
+export async function createWindowAtCursor(url, options) {
+  const { x, y } = await Neutralino.window.getPosition();
+
+  return Neutralino.window.create(url, {
+    x,
+    y,
+    borderless: false,
+    enableInspector: import.meta.env.DEV ? true : false,
+    exitProcessOnClose: true,
+    resizable: true,
+    transparent: false,
+    ...options,
+  });
+}
