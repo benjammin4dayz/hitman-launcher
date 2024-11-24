@@ -36,6 +36,7 @@ export const AppProvider = ({ children }) => {
   const [gamePath, setGamePath] = useState('');
   const [peacockPath, setPeacockPath] = useState('');
   const [game, setGame] = useState(null);
+  const [gameRunCount, setGameRunCount] = useState(0);
   const [patcher, setPatcher] = useState(null);
   const [server, setServer] = useState(null);
 
@@ -129,6 +130,16 @@ export const AppProvider = ({ children }) => {
       setPeacockPath(cfg?.peacockPath || '');
     })();
   }, []);
+
+  useEffect(() => {
+    if (!game && gameRunCount === 1) {
+      void stopPatcher();
+      void stopServer();
+      setGameRunCount(0);
+    } else if (game && gameRunCount === 0) {
+      setGameRunCount(1);
+    }
+  }, [game, gameRunCount, stopPatcher, stopServer]);
 
   return (
     <AppContext.Provider
