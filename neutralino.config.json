@@ -61,6 +61,6 @@
       "waitTimeout": 20000,
       "buildCommand": "npm run build"
     },
-    "binaryVersion": "nightly"
+    "binaryVersion": "5.5.0"
   }
 }
