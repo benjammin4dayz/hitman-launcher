@@ -1,11 +1,13 @@
+import { useSwitchTransition } from '@vanyapr/transition-hook';
 import { useState } from 'react';
 import { useAppContext } from '../AppProvider';
 import { Box } from '../components/atoms/Box';
 import { Config } from '../components/molecules/Config';
-import { Launcher } from '../components/organisms/Launcher';
-import { AppBar } from '../components/organisms/AppBar';
 import { StatusDisplay } from '../components/molecules/StatusDisplay';
-import { useSwitchTransition } from '@vanyapr/transition-hook';
+import { VersionTag } from '../components/molecules/VersionTag';
+import { AppBar } from '../components/organisms/AppBar';
+import { Launcher } from '../components/organisms/Launcher';
+import { APP_MANIFEST_URL, APP_RELEASE_URL, APP_VERSION } from '../constants';
 
 export const DefaultPage = () => {
   const { background, patcher, server, game, gamePath } = useAppContext();
@@ -70,6 +72,12 @@ export const DefaultPage = () => {
           </div>
         ))}
       </div>
+      <VersionTag
+        style={{ position: 'absolute', bottom: '0px', right: '10px' }}
+        version={APP_VERSION}
+        manifestURL={APP_MANIFEST_URL}
+        updateURL={APP_RELEASE_URL}
+      />
     </div>
   );
 };

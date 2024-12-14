@@ -1,6 +1,8 @@
+import githubIcon from '../../assets/github-icon.svg';
 import hitmapsLogo from '../../assets/hitmaps-h.svg';
-import { AppBarButton } from '../atoms/AppBarButton';
+import { APP_RELEASE_URL } from '../../constants';
 import { createWindowAtCursor } from '../../utils/neu';
+import { AppBarButton } from '../atoms/AppBarButton';
 
 export const AppBarButtonGroup = () => {
   const buttonStyle = {
@@ -18,7 +20,7 @@ export const AppBarButtonGroup = () => {
         justifyContent: 'flex-end',
         borderRadius: 'inherit',
         width: 'min-content',
-        gap: '0.5em',
+        gap: '0.1em',
       }}
     >
       <AppBarButton
@@ -42,6 +44,23 @@ export const AppBarButtonGroup = () => {
         }}
         style={buttonStyle}
         title="HITMAPS"
+      />
+      <AppBarButton
+        glyph={
+          <img src={githubIcon} style={{ height: '0.7em' }} draggable="false" />
+        }
+        onClick={() => {
+          createWindowAtCursor(APP_RELEASE_URL, {
+            width: 1024,
+            height: 768,
+          });
+        }}
+        onHoverStyle={{
+          backgroundColor: 'rgba(200, 200, 200, 0.3)',
+          boxShadow: '0 0 22px rgba(0, 0, 0, 0.2)',
+        }}
+        style={buttonStyle}
+        title="View this project on GitHub"
       />
     </div>
   );
