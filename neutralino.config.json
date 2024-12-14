@@ -11,20 +11,7 @@
   "singlePageServe": false,
   "enableServer": true,
   "enableNativeAPI": true,
-  "nativeAllowList": [
-    "app.*",
-    "os.*",
-    "storage.*",
-    "updater.*",
-    "filesystem.writeBinaryFile",
-    "window.setDraggableRegion",
-    "window.unsetDraggableRegion",
-    "window.move",
-    "window.minimize",
-    "window.create",
-    "window.center",
-    "window.getPosition"
-  ],
+  "nativeAllowList": ["app.*", "os.*", "storage.*", "window.*"],
   "modes": {
     "window": {
       "title": "HITMAN Launcher",
