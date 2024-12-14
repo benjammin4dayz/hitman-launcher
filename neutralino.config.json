@@ -4,7 +4,7 @@
   "applicationName": "HITMAN Launcher",
   "author": "benjammin4dayz",
   "description": "Unofficial launcher for HITMAN: World of Assassination",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "defaultMode": "window",
   "documentRoot": "/react-src/dist/",
   "url": "/",
