@@ -15,7 +15,7 @@
   "dependencies": {
     "@csstools/normalize.css": "^12.1.1",
     "@fontsource/roboto": "^5.1.0",
-    "@neutralinojs/lib": "^5.5.0",
+    "@neutralinojs/lib": "5.5.0",
     "@vanyapr/transition-hook": "^1.5.4",
     "path-browserify": "^1.0.1",
     "prop-types": "^15.8.1",
@@ -24,7 +24,7 @@
     "semver": "^7.6.3"
   },
   "devDependencies": {
-    "@types/react": "^18.3.16",
+    "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "eslint": "^8.57.1",
