@@ -164,6 +164,8 @@ export class ProcessWatcher {
 }
 
 export class NeuDB {
+  // db-v1: 0.1.0 - 0.3.0
+  // db-v2: >= 0.4.0
   static name = 'db-v2';
 
   static async getKey(key: string) {
