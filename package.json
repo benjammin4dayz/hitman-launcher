@@ -1,0 +1,24 @@
+{
+  "name": "hitman-launcher",
+  "version": "0.4.0",
+  "private": true,
+  "repository": "https://github.com/benjammin4dayz/hitman-launcher",
+  "type": "module",
+  "workspaces": [
+    "react-src"
+  ],
+  "scripts": {
+    "build": "neu build --clean",
+    "build:release": "npm run build -- --release",
+    "clean": "rimraf .tmp/ dist/ node_modules/ react-src/dist/ react-src/node_modules/",
+    "lint": "npm run lint --workspaces --if-present",
+    "setup": "npm ci && neu update",
+    "start": "neu run -- --window-enable-inspector",
+    "vscode:debug": "node scripts/debug.cjs",
+    "vscode:postdebug": "node scripts/debug.cjs --postdebug"
+  },
+  "devDependencies": {
+    "@neutralinojs/neu": "^11.3.0",
+    "rimraf": "^6.0.1"
+  }
+}
