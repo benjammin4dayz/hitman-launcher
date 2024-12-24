@@ -83,7 +83,10 @@ type ProcessRef = {
   exit: () => unknown;
 };
 
-export const LaunchProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const LaunchProvider: FC<{
+  children: ReactNode;
+  onError?: (reason: string) => void;
+}> = ({ children, onError }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const gameRef = useRef<ProcessRef | null>(null);
   const serverRef = useRef<ProcessRef | null>(null);
@@ -92,43 +95,64 @@ export const LaunchProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     // TODO: implement process watcher here; this involves checking the path
     // for steam:// browser protocol before using the regular spawn command.
-    if (!state.gamePath) return;
-    if (state.game) {
+    if (state.game && !state.gamePath) {
+      onError?.('Missing game path');
+      dispatch({ type: 'STOP_GAME' });
+      return;
+    } else if (state.game) {
       void spawn({
         processPath: state.gamePath,
+        onStdErr: () => {
+          onError?.('Game failed to launch');
+          dispatch({ type: 'STOP_GAME' });
+        },
         onExit: () => dispatch({ type: 'STOP_GAME' }),
       }).then(ref => (gameRef.current = ref));
     } else {
       gameRef.current?.exit();
       gameRef.current = null;
     }
-  }, [state.game, state.gamePath]);
+  }, [state.game, state.gamePath, onError]);
 
   useEffect(() => {
-    if (!state.serverPath) return;
-    if (state.server) {
+    if (state.server && !state.serverPath) {
+      onError?.('Missing server path');
+      dispatch({ type: 'STOP_SERVER' });
+      return;
+    } else if (state.server) {
       void spawn({
         processPath: state.serverPath,
+        onStdErr: () => {
+          onError?.('Server failed to launch');
+          dispatch({ type: 'STOP_SERVER' });
+        },
         onExit: () => dispatch({ type: 'STOP_SERVER' }),
       }).then(ref => (serverRef.current = ref));
     } else {
       serverRef.current?.exit();
       serverRef.current = null;
     }
-  }, [state.server, state.serverPath]);
+  }, [state.server, state.serverPath, onError]);
 
   useEffect(() => {
-    if (!state.patcherPath) return;
-    if (state.patcher) {
+    if (state.patcher && !state.patcherPath) {
+      onError?.('Missing patcher path');
+      dispatch({ type: 'STOP_PATCHER' });
+      return;
+    } else if (state.patcher) {
       void spawn({
         processPath: state.patcherPath,
+        onStdErr: () => {
+          onError?.('Patcher failed to launch');
+          dispatch({ type: 'STOP_PATCHER' });
+        },
         onExit: () => dispatch({ type: 'STOP_PATCHER' }),
       }).then(ref => (patcherRef.current = ref));
     } else {
       patcherRef.current?.exit();
       patcherRef.current = null;
     }
-  }, [state.patcher, state.patcherPath]);
+  }, [state.patcher, state.patcherPath, onError]);
 
   return (
     <LaunchContext.Provider value={{ state, dispatch }}>
