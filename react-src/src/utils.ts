@@ -13,10 +13,10 @@ export function safelyCall(
 }
 
 export async function userSelectFolderPath(message: string) {
-  let folderPath;
+  let folderPath = '';
 
   try {
-    await Neutralino.os.showFolderDialog(message, {
+    folderPath = await Neutralino.os.showFolderDialog(message, {
       defaultPath: window.NL_PATH,
     });
   } catch (e) {
