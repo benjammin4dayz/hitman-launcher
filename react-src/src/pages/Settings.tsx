@@ -22,7 +22,7 @@ export default function Settings() {
               }}
             />
           </Field>
-          {/* 
+
           <Field label="Peacock Path">
             <Input
               name="peacockPath"
@@ -31,7 +31,7 @@ export default function Settings() {
                 dispatch({ type: 'SET_PEACOCK_PATH', path: e.target.value });
               }}
             />
-          </Field> */}
+          </Field>
 
           <Button type="submit">OK</Button>
         </Fieldset.Content>
