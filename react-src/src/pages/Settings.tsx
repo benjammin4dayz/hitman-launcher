@@ -25,15 +25,15 @@ import { ActionFunction, Form, redirect } from 'react-router-dom';
 const launchCommands = createListCollection({
   items: [
     {
-      label: 'HITMAN: World of Assassination (Steam)',
+      label: '[Steam] HITMAN: World of Assassination',
       value: 'steam://launch/1659040',
     },
     {
-      label: 'HITMAN: Free Starter Pack (Steam)',
+      label: '[Steam] HITMAN: Free Starter Pack',
       value: 'steam://launch/1847520',
     },
     {
-      label: 'Custom Path',
+      label: 'Select Folder',
       value: '',
     },
   ],
@@ -93,7 +93,8 @@ export default function Settings() {
               </SelectRoot>
               {!launchCommands.items.find(
                 item =>
-                  item.value === state.gamePath && item.label !== 'Custom Path'
+                  item.value === state.gamePath &&
+                  item.label !== 'Select Folder'
               ) && (
                 <HStack w="full">
                   <Input
@@ -108,7 +109,7 @@ export default function Settings() {
                     }}
                   />
                   <Button
-                    variant="outline"
+                    variant="subtle"
                     onClick={() => {
                       void userSelectFolderPath(
                         'Select HITMAN game folder'
@@ -139,10 +140,18 @@ export default function Settings() {
                   }}
                 />
                 <Button
-                  variant="outline"
-                  onClick={() =>
-                    void userSelectFolderPath('Select Peacock Folder')
-                  }
+                  variant="subtle"
+                  onClick={() => {
+                    void userSelectFolderPath('Select Peacock Folder').then(
+                      path => {
+                        if (!path) return;
+                        dispatch({
+                          type: 'SET_PEACOCK_PATH',
+                          path: path,
+                        });
+                      }
+                    );
+                  }}
                 >
                   <LuFileSearch2 />
                 </Button>
