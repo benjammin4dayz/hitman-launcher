@@ -1,4 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
+import { NeuDB, spawn } from '@/utils';
+import path from 'path-browserify';
 import type { FC, ReactNode } from 'react';
 import {
   createContext,
@@ -7,8 +9,6 @@ import {
   useReducer,
   useRef,
 } from 'react';
-import { NeuDB, spawn } from './utils';
-import path from 'path-browserify';
 
 type DefaultState = {
   gamePath: string;
@@ -109,18 +109,34 @@ export const LaunchProvider: FC<{
       onError?.('Missing game path');
       dispatch({ type: 'STOP_GAME' });
       return;
-    } else if (state.game) {
+    } else if (state.game && !gameRef.current) {
       void spawn({
-        processPath: state.gamePath,
-        onStdErr: () => {
-          onError?.('Game failed to launch');
-          dispatch({ type: 'STOP_GAME' });
+        // IMPORTANT: load-bearing quotes below!
+        processPath: `"${path.join(state.gamePath, 'Retail', 'HITMAN3.exe')}"`,
+        processName: 'game',
+        onStdErr: evt => {
+          if (
+            typeof evt === 'string' &&
+            evt.includes('is not recognized as an internal or external')
+          ) {
+            onError?.('Game failed to launch');
+            dispatch({ type: 'STOP_GAME' });
+          } else if (
+            evt instanceof Array &&
+            (evt[0] as string).includes('The system cannot find the')
+          ) {
+            onError?.('Invalid game path');
+            dispatch({ type: 'STOP_GAME' });
+          }
         },
         onExit: () => dispatch({ type: 'STOP_GAME' }),
       }).then(ref => (gameRef.current = ref));
     } else {
       gameRef.current?.exit();
       gameRef.current = null;
+
+      dispatch({ type: 'STOP_SERVER' });
+      dispatch({ type: 'STOP_PATCHER' });
     }
   }, [state.game, state.gamePath, onError]);
 
@@ -129,10 +145,11 @@ export const LaunchProvider: FC<{
       onError?.('Missing server path');
       dispatch({ type: 'STOP_SERVER' });
       return;
-    } else if (state.server) {
+    } else if (state.server && !serverRef.current) {
       void spawn({
         // https://github.com/thepeacockproject/Peacock/blob/cd069f3f66a71b03d0431f8b225417f4838c7771/packaging/Start%20Server.cmd
         processPath: path.join(state.peacockPath, 'Start Server.cmd'),
+        processName: 'server',
         onStdErr: () => {
           onError?.('Server failed to launch');
           dispatch({ type: 'STOP_SERVER' });
@@ -150,10 +167,11 @@ export const LaunchProvider: FC<{
       onError?.('Missing patcher path');
       dispatch({ type: 'STOP_PATCHER' });
       return;
-    } else if (state.patcher) {
+    } else if (state.patcher && !patcherRef.current) {
       void spawn({
         // https://github.com/thepeacockproject/Peacock/blob/cd069f3f66a71b03d0431f8b225417f4838c7771/PeacockPatcher.exe
         processPath: path.join(state.peacockPath, 'PeacockPatcher.exe'),
+        processName: 'patcher',
         onStdErr: () => {
           onError?.('Patcher failed to launch');
           dispatch({ type: 'STOP_PATCHER' });

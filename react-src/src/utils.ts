@@ -37,6 +37,7 @@ export type SpawnOptions = {
 export async function spawn(
   { processPath, processName, onStdOut, onStdErr, onExit }: SpawnOptions = {
     processPath: '',
+    processName: 'process',
   }
 ) {
   const proc = await Neutralino.os.spawnProcess(processPath);
@@ -48,15 +49,15 @@ export async function spawn(
     if (proc.id === evt.detail.id) {
       switch (evt.detail.action) {
         case 'stdOut':
-          safelyCall(onStdOut, evt);
+          safelyCall(onStdOut, evt.detail.data);
           console.log(evt.detail.data);
           break;
         case 'stdErr':
-          safelyCall(onStdErr, evt);
+          safelyCall(onStdErr, evt.detail.data);
           console.error(evt.detail.data);
           break;
         case 'exit':
-          safelyCall(onExit, evt);
+          safelyCall(onExit, evt.detail.data);
           console.log(
             `${processName} exited with code: ${evt.detail.data as string}`
           );
