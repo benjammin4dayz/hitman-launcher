@@ -1,4 +1,4 @@
-import bgImageSrc from '@/assets/worldmap_grey.png';
+import bgImageSrc from '@/assets/worldmap_grey.jpg';
 import { Button, RouteButton } from '@/components/ui/button';
 import { useLaunchContext } from '@/LaunchProvider';
 import { useNeutralinoContext } from '@/NeutralinoProvider';
