@@ -101,14 +101,14 @@ export async function createWindowAtCursor(
 
 export type ProcessWatcherOptions = {
   processName: string;
-  onProcessStart?: (...args: unknown[]) => void;
-  onProcessEnd?: (...args: unknown[]) => void;
+  onProcessStart?: (pid: number) => void;
+  onProcessEnd?: () => void;
 };
 
 export class ProcessWatcher {
   public processName: string;
-  private onProcessStart?: (...args: unknown[]) => void;
-  private onProcessEnd?: (...args: unknown[]) => void;
+  private onProcessStart?: (pid: number) => void;
+  private onProcessEnd?: () => void;
   private lastState = false;
   private interval: number | null = null;
 
@@ -129,7 +129,9 @@ export class ProcessWatcher {
       if (this.lastState && !pid) {
         safelyCall(this.onProcessEnd);
       } else if (!this.lastState && pid) {
-        safelyCall(this.onProcessStart, pid);
+        safelyCall(() => {
+          this.onProcessStart?.(pid);
+        });
         this.stopWatcher();
         this.startWatcher(intervalDuration * 3);
       }
