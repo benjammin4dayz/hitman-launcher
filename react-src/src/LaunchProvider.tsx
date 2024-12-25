@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
-import { NeuDB, spawn } from '@/utils';
+import { NeuDB, ProcessWatcher, spawn } from '@/utils';
+import * as Neutralino from '@neutralinojs/lib';
 import path from 'path-browserify';
 import type { Dispatch, FC, ReactNode } from 'react';
 import {
@@ -103,20 +104,40 @@ export const LaunchProvider: FC<{
   }, []);
 
   useEffect(() => {
-    // TODO: implement process watcher here; this involves checking the path
-    // for steam:// browser protocol before using the regular spawn command.
     if (state.game && !state.gamePath) {
       onError?.('Missing game path');
       dispatch({ type: 'STOP_GAME' });
       return;
     } else if (state.game && !gameRef.current) {
-      void spawnNeutralinoManagedProcess({
-        // IMPORTANT: load-bearing quotes below!
-        path: `"${path.join(state.gamePath, 'Retail', 'HITMAN3.exe')}"`,
-        name: 'game',
-        onError,
-        dispatch,
-      }).then(ref => (gameRef.current = ref));
+      if (state.gamePath.startsWith('steam://')) {
+        void spawnSelfManagedProcess({
+          name: 'HITMAN3.exe',
+          launchTarget: state.gamePath,
+          onStart: pid => {
+            console.log('[ProcessWatcher] HITMAN3.exe started');
+            gameRef.current = {
+              exit: () => {
+                if (!['string', 'number'].includes(typeof pid)) return;
+                void Neutralino.os.spawnProcess(
+                  `cmd /c taskkill /pid ${pid} /f /t`
+                );
+              },
+            };
+          },
+          onEnd: () => {
+            console.log('[ProcessWatcher] HITMAN3.exe stopped');
+            dispatch({ type: 'STOP_GAME' });
+          },
+        });
+      } else {
+        void spawnNeutralinoManagedProcess({
+          // IMPORTANT: load-bearing quotes below!
+          path: `"${path.join(state.gamePath, 'Retail', 'HITMAN3.exe')}"`,
+          name: 'game',
+          onError,
+          dispatch,
+        }).then(ref => (gameRef.current = ref));
+      }
     } else {
       gameRef.current?.exit();
       gameRef.current = null;
@@ -218,4 +239,30 @@ async function spawnNeutralinoManagedProcess({
   });
 
   return ref;
+}
+
+function spawnSelfManagedProcess({
+  name,
+  launchTarget,
+  onStart,
+  onEnd,
+}: {
+  name: string;
+  launchTarget: string;
+  onStart?: (pid: string | number) => void;
+  onEnd?: () => void;
+}) {
+  console.log(`[ProcessWatcher] Spawning ${name} with ${launchTarget}...`);
+  const watcher = new ProcessWatcher({
+    processName: name,
+    onProcessStart: pid => {
+      onStart?.(pid);
+    },
+    onProcessEnd: () => {
+      onEnd?.();
+      watcher.stopWatcher();
+    },
+  });
+  watcher.startWatcher(1000);
+  void Neutralino.os.spawnProcess(`cmd /c start ${launchTarget}`);
 }
