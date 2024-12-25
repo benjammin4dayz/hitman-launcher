@@ -11,16 +11,18 @@ import { useLaunchContext } from './LaunchProvider';
 import { useNeutralinoContext } from './NeutralinoProvider';
 import * as Neutralino from '@neutralinojs/lib';
 import { useEffect } from 'react';
+import About from './pages/About';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Main />} />
       <Route
-        path="settings"
+        path="/settings"
         element={<Settings />}
         action={saveSettingsAction}
       />
+      <Route path="/about" element={<About />} />
     </Route>
   )
 );

@@ -2,6 +2,7 @@ import type { ButtonProps as ChakraButtonProps } from '@chakra-ui/react';
 import {
   AbsoluteCenter,
   Button as ChakraButton,
+  IconButton,
   Span,
   Spinner,
 } from '@chakra-ui/react';
@@ -40,24 +41,39 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
+export type RouteButtonProps = {
+  iconButton?: boolean;
+  to: string;
+} & ButtonProps &
+  React.RefAttributes<HTMLButtonElement>;
+
 export const RouteButton = React.forwardRef<
   HTMLButtonElement,
-  ButtonProps & { to: string }
+  RouteButtonProps
 >(function RouteButton(props, ref) {
   const navigate = useNavigate();
+
+  const buttonProps: RouteButtonProps = {
+    ...props,
+    ref: ref,
+    onClick: e => {
+      props.onClick?.(e);
+      void navigate(props.to);
+    },
+  };
 
   return (
     // Do not use `as={Link}` because it allows new windows to be spawned via
     // middle-click; these windows cannot connect to the app because the
     // one-time token is already consumed by the main window. It also displays
     // the URL in the bottom left which feels out-of-place given the context.
-    <Button
-      {...props}
-      ref={ref}
-      onClick={e => {
-        props.onClick?.(e);
-        void navigate(props.to);
-      }}
-    />
+
+    <>
+      {props.iconButton ? (
+        <IconButton {...buttonProps} />
+      ) : (
+        <Button {...buttonProps} />
+      )}
+    </>
   );
 });

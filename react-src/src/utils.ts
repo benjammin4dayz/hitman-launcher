@@ -79,14 +79,12 @@ export async function spawn(
   };
 }
 
-/** TODO: Submit a PR to fix this typedef @neutralinojs */
-export interface WindowOptions extends Neutralino.WindowOptions {
-  transparent?: boolean;
-}
+export type WindowOptions = Neutralino.WindowOptions &
+  Neutralino.WindowSizeOptions;
 
 export async function createWindowAtCursor(
   url: string,
-  options: WindowOptions
+  options: Partial<WindowOptions> = {}
 ) {
   const { x, y } = await Neutralino.window.getPosition();
 
@@ -98,7 +96,10 @@ export async function createWindowAtCursor(
     enableInspector: import.meta.env.DEV ? true : false,
     exitProcessOnClose: true,
     resizable: true,
-    transparent: false,
+    hidden: false,
+    extendUserAgentWith: `HitmanLauncher/${window.NL_APPVERSION || '0.0.0'} (${
+      window.NL_APPID ?? ''
+    })`,
   } as WindowOptions);
 }
 

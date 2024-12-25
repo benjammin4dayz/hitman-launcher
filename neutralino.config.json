@@ -26,7 +26,7 @@
       "borderless": false,
       "transparent": false,
       "maximize": false,
-      "resizable": true,
+      "resizable": false,
       "hidden": true,
       "useSavedState": false,
       "exitProcessOnClose": false
