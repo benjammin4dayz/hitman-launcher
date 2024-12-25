@@ -1,19 +1,29 @@
 import bgImageSrc from '@/assets/worldmap_grey.jpg';
 import { BrandHeading } from '@/components/BrandHeading';
 import { Button, RouteButton } from '@/components/ui/button';
+import { Status } from '@/components/ui/status';
 import { useLaunchContext } from '@/LaunchProvider';
 import { useNeutralinoContext } from '@/NeutralinoProvider';
 import { Box, Flex, Separator } from '@chakra-ui/react';
-import { LuDoorOpen, LuPlay, LuSettings } from 'react-icons/lu';
+import { LuDoorOpen, LuPlay, LuPowerOff, LuSettings } from 'react-icons/lu';
 
 export default function Main() {
-  const { exit } = useNeutralinoContext();
-  const { dispatch } = useLaunchContext();
+  const { exit: _exit } = useNeutralinoContext();
+  const { state, dispatch } = useLaunchContext();
 
   const play = () => {
     dispatch({ type: 'START_GAME' });
     dispatch({ type: 'START_SERVER' });
     dispatch({ type: 'START_PATCHER' });
+  };
+
+  const stop = () => {
+    dispatch({ type: 'SHUTDOWN' });
+  };
+
+  const exit = () => {
+    stop();
+    _exit();
   };
 
   return (
@@ -25,10 +35,52 @@ export default function Main() {
           w="full"
           variant="surface"
           justifyContent="flex-start"
-          onClick={play}
+          disabled={!state.gamePath}
+          onClick={state.game ? stop : play}
         >
-          <LuPlay /> Play
+          {!state.game ? (
+            <>
+              <LuPlay /> Play
+            </>
+          ) : (
+            <>
+              <LuPowerOff /> Stop
+            </>
+          )}
         </Button>
+
+        <Flex gap="12px" justifyContent="center">
+          <Button
+            flex="1"
+            variant="surface"
+            disabled={!state.peacockPath}
+            onClick={() => {
+              if (state.server) {
+                dispatch({ type: 'STOP_SERVER' });
+              } else {
+                dispatch({ type: 'START_SERVER' });
+              }
+            }}
+          >
+            <Status value={state.server ? 'success' : 'error'} />
+            Server
+          </Button>
+          <Button
+            flex="1"
+            variant="surface"
+            disabled={!state.peacockPath}
+            onClick={() => {
+              if (state.patcher) {
+                dispatch({ type: 'STOP_PATCHER' });
+              } else {
+                dispatch({ type: 'START_PATCHER' });
+              }
+            }}
+          >
+            <Status value={state.patcher ? 'success' : 'error'} />
+            Patcher
+          </Button>
+        </Flex>
 
         <Box flex="1" />
         <Separator borderColor="lotion" size="md" justifyContent="flex-start" />
