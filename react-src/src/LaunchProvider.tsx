@@ -15,25 +15,34 @@ type DefaultState = {
   gamePath: string;
   peacockPath: string;
   game: boolean;
+  gameLoading: boolean;
   server: boolean;
+  serverLoading: boolean;
   patcher: boolean;
+  patcherLoading: boolean;
 };
 
 const initialState: DefaultState = {
   gamePath: '',
   peacockPath: '',
   game: false,
+  gameLoading: false,
   server: false,
+  serverLoading: false,
   patcher: false,
+  patcherLoading: false,
 };
 
 type Action =
   | { type: 'START_GAME' }
+  | { type: 'GAME_STARTED' }
   | { type: 'STOP_GAME' }
   | { type: 'SET_GAME_PATH'; path: string }
   | { type: 'START_SERVER' }
+  | { type: 'SERVER_STARTED' }
   | { type: 'STOP_SERVER' }
   | { type: 'START_PATCHER' }
+  | { type: 'PATCHER_STARTED' }
   | { type: 'STOP_PATCHER' }
   | { type: 'SET_PEACOCK_PATH'; path: string }
   | { type: 'SHUTDOWN' };
@@ -41,17 +50,23 @@ type Action =
 const reducer = (state: DefaultState, action: Action): DefaultState => {
   switch (action.type) {
     case 'START_GAME':
-      return { ...state, game: true };
+      return { ...state, gameLoading: true };
+    case 'GAME_STARTED':
+      return { ...state, game: true, gameLoading: false };
     case 'STOP_GAME':
-      return { ...state, game: false };
+      return { ...state, game: false, gameLoading: false };
     case 'START_SERVER':
-      return { ...state, server: true };
+      return { ...state, serverLoading: true };
+    case 'SERVER_STARTED':
+      return { ...state, server: true, serverLoading: false };
     case 'STOP_SERVER':
-      return { ...state, server: false };
+      return { ...state, server: false, serverLoading: false };
     case 'START_PATCHER':
-      return { ...state, patcher: true };
+      return { ...state, patcherLoading: true };
+    case 'PATCHER_STARTED':
+      return { ...state, patcher: true, patcherLoading: false };
     case 'STOP_PATCHER':
-      return { ...state, patcher: false };
+      return { ...state, patcher: false, patcherLoading: false };
     case 'SET_GAME_PATH':
       return { ...state, gamePath: action.path };
     case 'SET_PEACOCK_PATH':
@@ -104,17 +119,18 @@ export const LaunchProvider: FC<{
   }, []);
 
   useEffect(() => {
-    if (state.game && !state.gamePath) {
+    if (state.gameLoading && !state.gamePath) {
       onError?.('Missing game path');
       dispatch({ type: 'STOP_GAME' });
       return;
-    } else if (state.game && !gameRef.current) {
+    } else if (state.gameLoading && !gameRef.current) {
       if (state.gamePath.startsWith('steam://')) {
         void spawnSelfManagedProcess({
           name: 'HITMAN3.exe',
           launchTarget: state.gamePath,
           onStart: pid => {
             console.log('[ProcessWatcher] HITMAN3.exe started');
+            dispatch({ type: 'GAME_STARTED' });
             gameRef.current = {
               exit: () => {
                 if (!['string', 'number'].includes(typeof pid)) return;
@@ -138,21 +154,23 @@ export const LaunchProvider: FC<{
           dispatch,
         }).then(ref => (gameRef.current = ref));
       }
-    } else {
+    } else if (!state.game && !state.gameLoading) {
       gameRef.current?.exit();
       gameRef.current = null;
 
       dispatch({ type: 'STOP_SERVER' });
       dispatch({ type: 'STOP_PATCHER' });
+    } else if (state.game) {
+      dispatch({ type: 'GAME_STARTED' });
     }
-  }, [state.game, state.gamePath, onError]);
+  }, [state.game, state.gamePath, state.gameLoading, onError]);
 
   useEffect(() => {
-    if (state.server && !state.peacockPath) {
+    if (state.serverLoading && !state.peacockPath) {
       onError?.('Missing server path');
       dispatch({ type: 'STOP_SERVER' });
       return;
-    } else if (state.server && !serverRef.current) {
+    } else if (state.serverLoading && !serverRef.current) {
       void spawnNeutralinoManagedProcess({
         // https://github.com/thepeacockproject/Peacock/blob/cd069f3f66a71b03d0431f8b225417f4838c7771/packaging/Start%20Server.cmd
         path: path.join(state.peacockPath, 'Start Server.cmd'),
@@ -160,18 +178,20 @@ export const LaunchProvider: FC<{
         onError,
         dispatch,
       }).then(ref => (serverRef.current = ref));
-    } else {
+    } else if (!state.server && !state.serverLoading) {
       serverRef.current?.exit();
       serverRef.current = null;
+    } else if (state.server) {
+      dispatch({ type: 'SERVER_STARTED' });
     }
-  }, [state.server, state.peacockPath, onError]);
+  }, [state.server, state.serverLoading, state.peacockPath, onError]);
 
   useEffect(() => {
-    if (state.patcher && !state.peacockPath) {
+    if (state.patcherLoading && !state.peacockPath) {
       onError?.('Missing patcher path');
       dispatch({ type: 'STOP_PATCHER' });
       return;
-    } else if (state.patcher && !patcherRef.current) {
+    } else if (state.patcherLoading && !patcherRef.current) {
       void spawnNeutralinoManagedProcess({
         // https://github.com/thepeacockproject/Peacock/blob/cd069f3f66a71b03d0431f8b225417f4838c7771/PeacockPatcher.exe
         path: path.join(state.peacockPath, 'PeacockPatcher.exe'),
@@ -179,11 +199,13 @@ export const LaunchProvider: FC<{
         onError,
         dispatch,
       }).then(ref => (patcherRef.current = ref));
-    } else {
+    } else if (!state.patcher && !state.patcherLoading) {
       patcherRef.current?.exit();
       patcherRef.current = null;
+    } else if (state.patcher) {
+      dispatch({ type: 'PATCHER_STARTED' });
     }
-  }, [state.patcher, state.peacockPath, onError]);
+  }, [state.patcher, state.patcherLoading, state.peacockPath, onError]);
 
   return (
     <LaunchContext.Provider value={{ state, dispatch }}>
@@ -207,6 +229,10 @@ async function spawnNeutralinoManagedProcess({
   onError?: (error: string) => void;
   onExit?: () => void;
 }) {
+  const dispatchStartAction = () => {
+    //@ts-expect-error handled by default case
+    dispatch({ type: `${name.toUpperCase()}_STARTED` });
+  };
   const dispatchStopAction = () => {
     //@ts-expect-error handled by default case
     dispatch({ type: `STOP_${name.toUpperCase()}` });
@@ -239,6 +265,7 @@ async function spawnNeutralinoManagedProcess({
     },
   });
 
+  dispatchStartAction();
   return ref;
 }
 

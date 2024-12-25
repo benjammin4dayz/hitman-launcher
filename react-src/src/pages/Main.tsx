@@ -4,7 +4,7 @@ import { Button, RouteButton } from '@/components/ui/button';
 import { Status } from '@/components/ui/status';
 import { useLaunchContext } from '@/LaunchProvider';
 import { useNeutralinoContext } from '@/NeutralinoProvider';
-import { Box, Flex, Separator } from '@chakra-ui/react';
+import { Box, Flex, Separator, Spinner } from '@chakra-ui/react';
 import { LuDoorOpen, LuPlay, LuPowerOff, LuSettings } from 'react-icons/lu';
 
 export default function Main() {
@@ -23,7 +23,9 @@ export default function Main() {
 
   const exit = () => {
     stop();
-    _exit();
+    setTimeout(() => {
+      _exit();
+    }, Math.random() * 65 + 10); // Allow time for processes to stop
   };
 
   return (
@@ -40,7 +42,8 @@ export default function Main() {
         >
           {!state.game ? (
             <>
-              <LuPlay /> Play
+              {state.gameLoading ? <Spinner /> : <LuPlay />}
+              Play
             </>
           ) : (
             <>
@@ -48,7 +51,6 @@ export default function Main() {
             </>
           )}
         </Button>
-
         <Flex gap="12px" justifyContent="center">
           <Button
             flex="1"
@@ -62,7 +64,11 @@ export default function Main() {
               }
             }}
           >
-            <Status value={state.server ? 'success' : 'error'} />
+            {state.serverLoading ? (
+              <Spinner />
+            ) : (
+              <Status value={state.server ? 'success' : 'error'} />
+            )}
             Server
           </Button>
           <Button
@@ -81,10 +87,8 @@ export default function Main() {
             Patcher
           </Button>
         </Flex>
-
         <Box flex="1" />
         <Separator borderColor="lotion" size="md" justifyContent="flex-start" />
-
         <RouteButton
           size="xl"
           w="full"
