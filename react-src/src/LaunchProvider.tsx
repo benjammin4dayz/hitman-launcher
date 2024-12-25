@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { NeuDB, spawn } from '@/utils';
 import path from 'path-browserify';
-import type { FC, ReactNode } from 'react';
+import type { Dispatch, FC, ReactNode } from 'react';
 import {
   createContext,
   useContext,
@@ -110,26 +110,12 @@ export const LaunchProvider: FC<{
       dispatch({ type: 'STOP_GAME' });
       return;
     } else if (state.game && !gameRef.current) {
-      void spawn({
+      void spawnNeutralinoManagedProcess({
         // IMPORTANT: load-bearing quotes below!
-        processPath: `"${path.join(state.gamePath, 'Retail', 'HITMAN3.exe')}"`,
-        processName: 'game',
-        onStdErr: evt => {
-          if (
-            typeof evt === 'string' &&
-            evt.includes('is not recognized as an internal or external')
-          ) {
-            onError?.('Game failed to launch');
-            dispatch({ type: 'STOP_GAME' });
-          } else if (
-            evt instanceof Array &&
-            (evt[0] as string).includes('The system cannot find the')
-          ) {
-            onError?.('Invalid game path');
-            dispatch({ type: 'STOP_GAME' });
-          }
-        },
-        onExit: () => dispatch({ type: 'STOP_GAME' }),
+        path: `"${path.join(state.gamePath, 'Retail', 'HITMAN3.exe')}"`,
+        name: 'game',
+        onError,
+        dispatch,
       }).then(ref => (gameRef.current = ref));
     } else {
       gameRef.current?.exit();
@@ -146,15 +132,12 @@ export const LaunchProvider: FC<{
       dispatch({ type: 'STOP_SERVER' });
       return;
     } else if (state.server && !serverRef.current) {
-      void spawn({
+      void spawnNeutralinoManagedProcess({
         // https://github.com/thepeacockproject/Peacock/blob/cd069f3f66a71b03d0431f8b225417f4838c7771/packaging/Start%20Server.cmd
-        processPath: path.join(state.peacockPath, 'Start Server.cmd'),
-        processName: 'server',
-        onStdErr: () => {
-          onError?.('Server failed to launch');
-          dispatch({ type: 'STOP_SERVER' });
-        },
-        onExit: () => dispatch({ type: 'STOP_SERVER' }),
+        path: path.join(state.peacockPath, 'Start Server.cmd'),
+        name: 'server',
+        onError,
+        dispatch,
       }).then(ref => (serverRef.current = ref));
     } else {
       serverRef.current?.exit();
@@ -168,15 +151,12 @@ export const LaunchProvider: FC<{
       dispatch({ type: 'STOP_PATCHER' });
       return;
     } else if (state.patcher && !patcherRef.current) {
-      void spawn({
+      void spawnNeutralinoManagedProcess({
         // https://github.com/thepeacockproject/Peacock/blob/cd069f3f66a71b03d0431f8b225417f4838c7771/PeacockPatcher.exe
-        processPath: path.join(state.peacockPath, 'PeacockPatcher.exe'),
-        processName: 'patcher',
-        onStdErr: () => {
-          onError?.('Patcher failed to launch');
-          dispatch({ type: 'STOP_PATCHER' });
-        },
-        onExit: () => dispatch({ type: 'STOP_PATCHER' }),
+        path: path.join(state.peacockPath, 'PeacockPatcher.exe'),
+        name: 'patcher',
+        onError,
+        dispatch,
       }).then(ref => (patcherRef.current = ref));
     } else {
       patcherRef.current?.exit();
@@ -192,3 +172,50 @@ export const LaunchProvider: FC<{
 };
 
 export default LaunchProvider;
+
+async function spawnNeutralinoManagedProcess({
+  name,
+  path,
+  dispatch,
+  onError,
+  onExit,
+}: {
+  name: string;
+  path: string;
+  dispatch: Dispatch<Action>;
+  onError?: (error: string) => void;
+  onExit?: () => void;
+}) {
+  const dispatchStopAction = () => {
+    //@ts-expect-error handled by default case
+    dispatch({ type: `STOP_${name.toUpperCase()}` });
+  };
+
+  const ref = await spawn({
+    processPath: path,
+    processName: name,
+    onStdErr: evt => {
+      if (
+        typeof evt === 'string' &&
+        evt.includes('is not recognized as an internal or external')
+      ) {
+        onError?.(
+          `${name.charAt(0).toUpperCase() + name.slice(1)} failed to launch`
+        );
+        dispatchStopAction();
+      } else if (
+        evt instanceof Array &&
+        (evt[0] as string)?.includes('The system cannot find the')
+      ) {
+        onError?.(`Invalid ${name} path`);
+        dispatchStopAction();
+      }
+    },
+    onExit: () => {
+      onExit?.();
+      dispatchStopAction();
+    },
+  });
+
+  return ref;
+}

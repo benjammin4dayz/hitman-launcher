@@ -28,7 +28,7 @@ export async function userSelectFolderPath(message: string) {
 
 export type SpawnOptions = {
   processPath: string;
-  processName?: string;
+  processName: string;
   onStdOut?: (...args: unknown[]) => void;
   onStdErr?: (...args: unknown[]) => void;
   onExit?: (...args: unknown[]) => void;
@@ -109,8 +109,8 @@ export class ProcessWatcher {
   public processName: string;
   private onProcessStart?: (...args: unknown[]) => void;
   private onProcessEnd?: (...args: unknown[]) => void;
-  lastState = false;
-  interval: number | null = null;
+  private lastState = false;
+  private interval: number | null = null;
 
   constructor({
     processName,
