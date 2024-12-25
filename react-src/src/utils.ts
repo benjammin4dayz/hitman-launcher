@@ -1,9 +1,6 @@
 import * as Neutralino from '@neutralinojs/lib';
 
-export function safelyCall(
-  fn: ((...args: unknown[]) => void) | undefined,
-  ...args: unknown[]
-) {
+export function safelyCall(fn: (args: unknown) => void, args?: unknown) {
   if (!fn) return;
   try {
     fn(args);
@@ -29,9 +26,9 @@ export async function userSelectFolderPath(message: string) {
 export type SpawnOptions = {
   processPath: string;
   processName: string;
-  onStdOut?: (...args: unknown[]) => void;
-  onStdErr?: (...args: unknown[]) => void;
-  onExit?: (...args: unknown[]) => void;
+  onStdOut?: (data: unknown) => void;
+  onStdErr?: (data: unknown) => void;
+  onExit?: (data: unknown) => void;
 };
 
 export async function spawn(
@@ -49,15 +46,21 @@ export async function spawn(
     if (proc.id === evt.detail.id) {
       switch (evt.detail.action) {
         case 'stdOut':
-          safelyCall(onStdOut, evt.detail.data);
+          safelyCall(() => {
+            onStdOut?.(evt.detail.data);
+          });
           console.log(evt.detail.data);
           break;
         case 'stdErr':
-          safelyCall(onStdErr, evt.detail.data);
+          safelyCall(() => {
+            onStdErr?.(evt.detail.data);
+          });
           console.error(evt.detail.data);
           break;
         case 'exit':
-          safelyCall(onExit, evt.detail.data);
+          safelyCall(() => {
+            onExit?.(evt.detail.data);
+          });
           console.log(
             `${processName} exited with code: ${evt.detail.data as string}`
           );
@@ -127,7 +130,9 @@ export class ProcessWatcher {
       const pid = await this.#ps();
 
       if (this.lastState && !pid) {
-        safelyCall(this.onProcessEnd);
+        safelyCall(() => {
+          this.onProcessEnd?.();
+        });
       } else if (!this.lastState && pid) {
         safelyCall(() => {
           this.onProcessStart?.(pid);

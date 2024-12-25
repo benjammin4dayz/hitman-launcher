@@ -216,25 +216,19 @@ async function spawnNeutralinoManagedProcess({
     processPath: path,
     processName: name,
     onStdErr: evt => {
-      // TODO: fix this type
-      if (
-        (typeof evt === 'string' &&
-          evt.includes('is not recognized as an internal or external')) ||
-        (evt instanceof Array &&
-          (evt[0] as string)?.includes(
-            'is not recognized as an internal or external'
-          ))
-      ) {
+      if (typeof evt !== 'string') {
+        console.warn(
+          'Unexpected response from process! Expected string but received type:',
+          typeof evt
+        );
+        return;
+      }
+      if (evt.includes('is not recognized as an internal or external')) {
         onError?.(
           `${name.charAt(0).toUpperCase() + name.slice(1)} failed to launch`
         );
         dispatchStopAction();
-      } else if (
-        (typeof evt === 'string' &&
-          evt.includes('The system cannot find the')) ||
-        (evt instanceof Array &&
-          (evt[0] as string)?.includes('The system cannot find the'))
-      ) {
+      } else if (evt.includes('The system cannot find the')) {
         onError?.(`Invalid ${name} path`);
         dispatchStopAction();
       }
