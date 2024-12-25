@@ -7,6 +7,10 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
+import { useLaunchContext } from './LaunchProvider';
+import { useNeutralinoContext } from './NeutralinoProvider';
+import * as Neutralino from '@neutralinojs/lib';
+import { useEffect } from 'react';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +26,18 @@ const router = createBrowserRouter(
 );
 
 function App() {
+  const { exit } = useNeutralinoContext();
+  const { dispatch } = useLaunchContext();
+
+  useEffect(() => {
+    void Neutralino.events.on('windowClose', () => {
+      dispatch({ type: 'SHUTDOWN' });
+      setTimeout(() => {
+        exit();
+      }, Math.random() * 65 + 10); // Allow time for processes to stop
+    });
+  }, [dispatch, exit]);
+
   return <RouterProvider router={router} />;
 }
 

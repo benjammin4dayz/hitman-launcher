@@ -46,9 +46,7 @@ export default function Settings() {
     <Box h="full" bg={`url('${worldmapRed}')`}>
       <Form method="post" action="/settings">
         <Fieldset.Root px="30px" color="lotion">
-          <BrandHeading mt="0.7em" mb="0.3em">
-            CONFIG
-          </BrandHeading>
+          <BrandHeading my="0.7em">CONFIG</BrandHeading>
           <Fieldset.Content mt="0">
             <Field label="Game Path" required>
               <SelectRoot

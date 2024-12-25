@@ -29,7 +29,7 @@
       "resizable": true,
       "hidden": true,
       "useSavedState": false,
-      "exitProcessOnClose": true
+      "exitProcessOnClose": false
     }
   },
   "cli": {
