@@ -27,7 +27,7 @@
       "transparent": false,
       "maximize": false,
       "resizable": true,
-      "hidden": false,
+      "hidden": true,
       "useSavedState": false,
       "exitProcessOnClose": true
     }

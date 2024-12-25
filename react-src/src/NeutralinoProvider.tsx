@@ -51,6 +51,7 @@ export const NeutralinoProvider = ({
   useEffect(() => {
     try {
       Neutralino.init();
+      void Neutralino.window.show();
       //
       // If the state is reloaded while Neutralino is already initialized,
       // the "ready" event won't fire. This should always be accurate because

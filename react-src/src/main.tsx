@@ -11,7 +11,7 @@ import { Toaster, toaster } from './components/ui/toaster';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <NeutralinoProvider>
+    <NeutralinoProvider unmanaged>
       <LaunchProvider
         onError={reason =>
           toaster.error({
