@@ -1,4 +1,5 @@
 import worldmapRed from '@/assets/worldmap_red.png';
+import { BrandHeading } from '@/components/BrandHeading';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import {
@@ -15,7 +16,6 @@ import {
   Box,
   createListCollection,
   Fieldset,
-  Heading,
   HStack,
   Input,
 } from '@chakra-ui/react';
@@ -46,25 +46,9 @@ export default function Settings() {
     <Box h="full" bg={`url('${worldmapRed}')`}>
       <Form method="post" action="/settings">
         <Fieldset.Root px="30px" color="lotion">
-          <Heading
-            as="h1"
-            bg="lotion"
-            border="1px solid"
-            borderColor="lotion"
-            color="black"
-            fontFamily="heading"
-            fontWeight="bold"
-            fontSize="5xl"
-            letterSpacing="0.266em"
-            mx="auto"
-            my="0.7em"
-            px="6"
-            py="2"
-            textAlign="center"
-            whiteSpace="nowrap"
-          >
+          <BrandHeading mt="0.7em" mb="0.3em">
             CONFIG
-          </Heading>
+          </BrandHeading>
           <Fieldset.Content mt="0">
             <Field label="Game Path" required>
               <SelectRoot
