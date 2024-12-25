@@ -51,7 +51,6 @@ export const NeutralinoProvider = ({
   useEffect(() => {
     try {
       Neutralino.init();
-      void Neutralino.window.show();
       //
       // If the state is reloaded while Neutralino is already initialized,
       // the "ready" event won't fire. This should always be accurate because
@@ -73,6 +72,14 @@ export const NeutralinoProvider = ({
       }
     };
   }, [failAfterMs]);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) {
+      // Don't center in dev because it gets triggered by HMR
+      void Neutralino.window.center();
+    }
+    void Neutralino.window.show();
+  }, [ready]);
 
   return (
     <NeutralinoContext.Provider value={{ ready, exit }}>
