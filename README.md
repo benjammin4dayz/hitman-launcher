@@ -3,7 +3,7 @@
 <p align="center">Unofficial launcher for <strong>HITMAN: World of Assassination</strong> with support for community tools.</p>
 
 <p align="center">
-<kbd><img width="480" src="https://github.com/user-attachments/assets/e851836d-7799-4969-ae13-e4920473c8c3" /></kbd>
+<kbd><img width="480" src="https://github.com/user-attachments/assets/baa95433-8823-4516-8051-7617637cf88e" /></kbd>
 </p>
 
 <p align="center">
