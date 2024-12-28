@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HITMAN Launcher</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/normalize.css@8.0.1/normalize.css"
+    />
+    <style>
+      @keyframes skeleton {
+        0% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.5;
+        }
+      }
+      body {
+        margin: 0;
+        background-color: #000000;
+        text-align: center;
+        color: #fafafa;
+        font-family: Inter, sans-serif;
+      }
+      header {
+        background-color: #ce1924;
+        padding: 20px 0;
+        color: #fafafa;
+      }
+      h1 {
+        margin: 0;
+        font-size: 2.5em;
+      }
+      h2 {
+        margin: 10px 0;
+        font-size: 1.2em;
+      }
+      ul,
+      li,
+      ol {
+        list-style-type: none;
+      }
+      .main {
+        margin: 20px 0;
+      }
+      .preview-img {
+        width: 480px;
+        aspect-ratio: 4/3;
+      }
+      .link-container {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+        & .link {
+          transition: background-color 0.3s;
+          margin: 1em;
+          border: none;
+          border-radius: 5px;
+          background-color: #660200;
+          cursor: pointer;
+          padding: 15px 30px;
+          text-decoration: none;
+          color: #fafafa;
+          font-size: 1em;
+          &:hover {
+            background-color: #ce1924;
+          }
+        }
+      }
+      .cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 20px 0;
+        & .card {
+          display: flex;
+          flex: 1 1 200px;
+          flex-direction: column;
+          flex-grow: 1;
+          margin: 10px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+          background-color: #1a1a1a;
+          padding: 20px;
+          max-width: 300px;
+          color: #fafafa;
+          & h3 {
+            margin: 0 0 10px;
+            color: #ce1924;
+          }
+        }
+      }
+      .changelog {
+        margin: auto;
+        margin-bottom: 3em;
+        border-top: 2px solid #ce1924;
+        border-right: 1px solid #fafafa;
+        border-bottom: 2px solid #ce1924;
+        border-left: 1px solid #fafafa;
+        border-radius: 10px;
+        background-color: #1a1a1a;
+        padding: 1.5em;
+        max-width: 1000px;
+        color: #fafafa;
+      }
+      .skeleton {
+        transition: opacity 1s;
+        opacity: 0.5;
+        margin: 5px 0;
+        border-radius: 4px;
+        background: #e0e0e0;
+        height: 20px;
+        animation: skeleton 1.5s infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>HITMAN Launcher</h1>
+      <h2>Launcher for HITMAN: World of Assassination</h2>
+    </header>
+
+    <div class="main">
+      <img
+        src="https://github.com/user-attachments/assets/baa95433-8823-4516-8051-7617637cf88e"
+        alt="App Preview"
+        class="preview-img"
+      />
+
+      <nav class="link-container">
+        <a
+          class="link"
+          href="https://github.com/benjammin4dayz/hitman-launcher/releases/latest/download/HITMAN-release.zip"
+          target="_blank"
+          >Download latest release</a
+        >
+        <a
+          class="link"
+          href="https://github.com/benjammin4dayz/hitman-launcher"
+          target="_blank"
+          >View source on GitHub</a
+        >
+      </nav>
+
+      <main class="cards">
+        <section class="card">
+          <h3>1. Install</h3>
+          <p>
+            Click the download link above to get the latest release from GitHub.
+            Extract the archive to any folder; overwrite existing app files to
+            update.
+          </p>
+          <p>
+            For easy access, create a shortcut to the launcher on your desktop
+            or start menu.
+          </p>
+        </section>
+        <section class="card">
+          <h3>2. Setup</h3>
+          <p>
+            Go to the app settings and point your game target to your HITMAN
+            installation.
+          </p>
+          <p>
+            Optionally, download
+            <a
+              href="https://thepeacockproject.org/"
+              rel="noopener noreferrer"
+              target="_blank"
+              >The Peacock Project</a
+            >
+            and set the path to its root folder.
+          </p>
+        </section>
+        <section class="card">
+          <h3>3. Play</h3>
+          <p>
+            Launch the game and server components and take them all down with
+            one click!
+          </p>
+          <p>
+            Take advantage of convenient features like the built-in
+            <a
+              href="https://www.hitmaps.com/"
+              rel="noopener noreferrer"
+              target="_blank"
+              >HITMAPS</a
+            >
+            shortcut.
+          </p>
+        </section>
+      </main>
+
+      <aside class="changelog" role="complementary" id="changelog">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </aside>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+      async function fetchResource(url) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('Bad response from server');
+          const data = await response.json();
+          return data.body;
+        } catch (error) {
+          console.error('An error occurred while fetching a resource:', error);
+        }
+      }
+
+      void fetchResource(
+        'https://api.github.com/repos/benjammin4dayz/hitman-launcher/releases/latest'
+      ).then(changelog => {
+        document.getElementById('changelog').innerHTML =
+          marked.parse(changelog);
+      });
+    </script>
+  </body>
+</html>
