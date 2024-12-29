@@ -3,7 +3,7 @@ import { BrandHeading } from '@/components/BrandHeading';
 import { Button, RouteButton } from '@/components/ui/button';
 import { Status } from '@/components/ui/status';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useLaunchContext } from '@/LaunchProvider';
+import { useLaunchContext } from '@/providers/LaunchProvider';
 import { createWindowAtCursor } from '@/utils';
 import {
   Box,

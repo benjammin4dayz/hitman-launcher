@@ -1,16 +1,16 @@
 import RootLayout from '@/layouts/RootLayout';
 import Main from '@/pages/Main';
 import Settings, { saveSettingsAction } from '@/pages/Settings';
+import { useLaunchContext } from '@/providers/LaunchProvider';
+import { useNeutralinoContext } from '@/providers/NeutralinoProvider';
+import * as Neutralino from '@neutralinojs/lib';
+import { useEffect } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
 } from 'react-router-dom';
-import { useLaunchContext } from './LaunchProvider';
-import { useNeutralinoContext } from './NeutralinoProvider';
-import * as Neutralino from '@neutralinojs/lib';
-import { useEffect } from 'react';
 import About from './pages/About';
 
 const router = createBrowserRouter(

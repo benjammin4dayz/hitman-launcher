@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValueText,
 } from '@/components/ui/select';
-import { useLaunchContext } from '@/LaunchProvider';
+import { useLaunchContext } from '@/providers/LaunchProvider';
 import { NeuDB, userSelectFolderPath } from '@/utils';
 import {
   Box,
