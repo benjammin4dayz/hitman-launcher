@@ -13,7 +13,7 @@
         "killOnServerStop": true,
         "pattern": "Local:.*http://localhost:([0-9]+)/",
         "uriFormat": "http://localhost:%s",
-        "webRoot": "${workspaceFolder}${pathSeparator}react-src"
+        "webRoot": "${workspaceFolder}${pathSeparator}app"
       },
       "postDebugTask": "npm: vscode:postdebug"
     }
