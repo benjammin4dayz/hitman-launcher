@@ -24,13 +24,18 @@ import { ActionFunction, Form, redirect } from 'react-router-dom';
 
 const launchCommands = createListCollection({
   items: [
+    // steam://run/<id>//<args>/
+    // Runs an application. It will be installed if necessary.
+    // The //<args> is optional, args are passed to the application as launch parameters.
+    //
+    // @see https://developer.valvesoftware.com/wiki/Steam_browser_protocol
     {
       label: '[Steam] HITMAN: World of Assassination',
-      value: 'steam://launch/1659040',
+      value: 'steam://launch/1659040//-skip_launcher%20-d3d12',
     },
     {
       label: '[Steam] HITMAN: Free Starter Pack',
-      value: 'steam://launch/1847520',
+      value: 'steam://launch/1847520//-skip_launcher%20-d3d12',
     },
     {
       label: 'Select Folder',
